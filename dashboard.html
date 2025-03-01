@@ -4,42 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <!-- Add your CSS link here -->
     <link rel="stylesheet" href="styles.css">
-    <!-- QR Scanner Library -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 </head>
 <body>
+    <div class="header">
+        <button id="home-btn">Home</button>
+    </div>
     <h1>Welcome, <span id="user-name"></span></h1>
-    <button id="scan-qr">Scan QR</button>
+    <button id="scan-qr" class="medium-btn">Scan QR</button>
 
-    <!-- QR Scanner elements -->
     <div id="qr-reader" style="display: none;"></div>
     <button id="stop-scan" style="display: none;">Stop Scanner</button>
     <div id="camera-error" style="color: red; display: none;"></div>
 
     <div id="fire-extinguisher-details" style="display: none;">
         <h2>Fire Extinguisher Details</h2>
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Type</th>
-                <th>Last Service Date</th>
-                <th>Expiry Date</th>
-            </tr>
-            <tr>
-                <td><input type="text" id="ext-id" disabled></td>
-                <td><input type="text" id="ext-type" disabled></td>
-                <td><input type="date" id="ext-service" disabled></td>
-                <td><input type="date" id="ext-expiry" disabled></td>
-            </tr>
-        </table>
-
-        <button id="edit-btn" style="display: none;">Edit</button>
-        <button id="submit-btn" style="display: none;">Submit</button>
-
-        <h2>History</h2>
-        <div id="history"></div>
+        <div>
+            <button id="inspection-btn">Inspection</button>
+            <button id="report-btn">Report</button>
+        </div>
+        <div id="inspection-sheet" style="display: none;">
+            <!-- Inspection Checksheet Table -->
+            <h3>Inspection Checksheet</h3>
+            <table>
+                <tr>
+                    <th>Fire Extinguisher S.No</th>
+                    <th>Location</th>
+                    <th>Type of Fire Extinguisher</th>
+                    <th>Weight in Kg</th>
+                    <th>Manufacturing / Refilling Date</th>
+                    <th>HPT Date</th>
+                    <th>Inspected By</th>
+                    <th>Inspection Done on</th>
+                    <th>Inspection Due Date</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td><input type="text" id="location" disabled></td>
+                    <td><input type="text" id="type" disabled></td>
+                    <td><input type="number" id="weight" disabled></td>
+                    <td><input type="date" id="manufacturing-date" disabled></td>
+                    <td><input type="date" id="hpt-date" disabled></td>
+                    <td><input type="text" id="inspected-by" disabled></td>
+                    <td><input type="date" id="inspection-done" disabled></td>
+                    <td><input type="date" id="inspection-due" disabled></td>
+                </tr>
+                <tr>
+                    <th>S.No</th>
+                    <th>Checklist</th>
+                    <th>Yes</th>
+                    <th>No</th>
+                    <th>Remarks</th>
+                </tr>
+                <!-- Add checklist items here -->
+            </table>
+        </div>
+        <div id="report-sheet" style="display: none;">
+            <h3>Report Sheet</h3>
+            <table>
+                <tr>
+                    <th>S.No</th>
+                    <th>Location</th>
+                    <th>Type of Fire Extinguisher</th>
+                    <th>Weight in Kg</th>
+                    <th>Manufacturing / Refilling Date</th>
+                    <th>HPT Date</th>
+                    <th>Inspection Done on</th>
+                    <th>Inspection Due Date</th>
+                    <th>Inspection Checksheet</th>
+                    <th>Remarks</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td><input type="text" id="report-location" disabled></td>
+                    <td><input type="text" id="report-type" disabled></td>
+                    <td><input type="number" id="report-weight" disabled></td>
+                    <td><input type="date" id="report-manufacturing" disabled></td>
+                    <td><input type="date" id="report-hpt" disabled></td>
+                    <td><input type="date" id="report-inspection-done" disabled></td>
+                    <td><input type="date" id="report-inspection-due" disabled></td>
+                    <td><button id="view-inspection">View Inspection</button></td>
+                    <td><input type="text" id="report-remarks" disabled></td>
+                </tr>
+            </table>
+        </div>
     </div>
 
     <script src="dashboard.js"></script>

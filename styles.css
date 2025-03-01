@@ -13,13 +13,17 @@ h1, h2 {
 }
 
 /* Container Styling */
-#auth-container, #signup-container {
+#auth-container, #signup-container, #dashboard-container {
     width: 350px;
     margin: 50px auto;
     padding: 20px;
     background: white;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
+}
+
+#dashboard-container {
+    width: 500px;
 }
 
 /* Forms */
@@ -43,6 +47,7 @@ button {
     border: none;
     cursor: pointer;
     border-radius: 5px;
+    margin: 5px;
 }
 
 button:hover {
@@ -55,78 +60,13 @@ button {
     color: white;
 }
 
-/* Scan QR Button */
-#scan-qr {
-    background-color: #28a745;
-    color: white;
-    padding: 15px;
-    margin-top: 20px;
-    font-size: 18px;
-}
-
-/* Fire Extinguisher Details */
-#fire-extinguisher-details {
-    margin-top: 20px;
-    padding: 15px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Table Styles */
-table {
-    width: 80%;
-    margin: 20px auto;
-    border-collapse: collapse;
-    background: white;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-th, td {
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: center;
-}
-
-th {
-    background-color: #007bff;
-    color: white;
-}
-
-/* Edit & Submit Buttons */
-#edit-btn {
-    background-color: #ffc107;
-    color: black;
-}
-
-#submit-btn {
-    background-color: #dc3545;
-    color: white;
-}
-
-/* History Section */
-#history {
-    margin: 20px auto;
-    padding: 15px;
-    width: 80%;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Medium Button */
-.medium-btn {
-    width: 200px;
-    height: 50px;
-    font-size: 20px;
-    margin: 20px auto;
-}
-
-/* Header Button */
-.header {
+/* Navigation Buttons */
+.navigation-buttons {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     padding: 10px;
+}
+
+.nav-btn {
+    background-color: #6c757d;
 }

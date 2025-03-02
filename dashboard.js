@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const mockData = {
             id: decodedText,
             type: "ABC",
-            location: "Receiption",
+            location: "Reception",
             weight: "6",
             serviceDate: "2024-06-06",
             expiryDate: "2027-06-05",

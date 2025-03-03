@@ -92,7 +92,45 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     };
                 };
-                            reader.readAsDataURL(file);
-                        }
-                    };
-                });
+                reader.readAsDataURL(file);
+            }
+        };
+        fileInput.click();
+    });
+
+    function handleScanSuccess(decodedText, scanner) {
+        alert("QR Code Scanned: " + decodedText);
+        if (scanner) scanner.stop();
+        document.getElementById("qr-reader").style.display = "none";
+
+        const mockData = {
+            id: decodedText,
+            type: "ABC",
+            location: "Reception",
+            weight: "6",
+            serviceDate: "2024-06-06",
+            expiryDate: "2027-06-05",
+            hptDate: "2027-06-05"
+        };
+
+        localStorage.setItem("currentExtinguisher", JSON.stringify(mockData));
+
+        scanOptions.style.display = "block";
+    }
+
+    inspectionBtn.addEventListener("click", function () {
+        const extData = JSON.parse(localStorage.getItem("currentExtinguisher"));
+        scanOptions.style.display = "none";
+
+        if (userData.role === "manager") {
+            window.location.href = "inspection.html";
+        } else {
+            alert("Only managers can access inspection checksheets.");
+        }
+    });
+
+    reportBtn.addEventListener("click", function () {
+        scanOptions.style.display = "none";
+        window.location.href = "report.html";
+    });
+});

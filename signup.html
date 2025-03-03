@@ -7,14 +7,6 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="navigation-buttons">
-        <button id="home-btn" class="nav-btn">Home</button>
-        <div class="nav-controls">
-            <button id="prev-btn" class="nav-btn">Previous</button>
-            <button id="next-btn" class="nav-btn">Next</button>
-        </div>
-    </div>
-
     <div id="signup-container">
         <h2>Sign Up</h2>
         <form id="signup-form">
@@ -30,7 +22,7 @@
                 <option value="manager">Manager</option>
             </select>
 
-            <!-- Manager Secret Key Field -->
+            <!-- Manager Secret Key Field (Hidden by Default) -->
             <div id="manager-secret-field" style="display: none;">
                 <label>Manager Secret Key:</label>
                 <input type="password" id="manager-secret-key" placeholder="Enter Manager Secret Key">
@@ -38,7 +30,17 @@
 
             <button type="submit">Sign Up</button>
         </form>
+
+        <p>Already have an account? <a href="index.html">Login</a></p>
     </div>
+
+    <script>
+        // Show or hide the Manager Secret Key field based on role selection
+        document.getElementById("signup-role").addEventListener("change", function () {
+            document.getElementById("manager-secret-field").style.display = 
+                this.value === "manager" ? "block" : "none";
+        });
+    </script>
 
     <script src="auth.js"></script>
 </body>

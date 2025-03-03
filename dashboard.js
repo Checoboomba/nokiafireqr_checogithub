@@ -9,30 +9,28 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    // Navigation buttons
     const homeBtn = document.getElementById("home-btn");
     const prevBtn = document.getElementById("prev-btn");
     const nextBtn = document.getElementById("next-btn");
 
     if (homeBtn) {
-        homeBtn.addEventListener("click", function() {
+        homeBtn.addEventListener("click", function () {
             window.location.href = "dashboard.html";
         });
     }
 
     if (prevBtn) {
-        prevBtn.addEventListener("click", function() {
+        prevBtn.addEventListener("click", function () {
             window.history.back();
         });
     }
 
     if (nextBtn) {
-        nextBtn.addEventListener("click", function() {
+        nextBtn.addEventListener("click", function () {
             window.history.forward();
         });
     }
 
-    // QR scanning functionality
     const scanBtn = document.getElementById("scan-qr");
     const uploadBtn = document.getElementById("upload-qr");
     const scanOptions = document.getElementById("scan-options");
@@ -43,13 +41,11 @@ document.addEventListener("DOMContentLoaded", function () {
     scanBtn.addEventListener("click", async function () {
         try {
             document.getElementById("qr-reader").style.display = "block";
-            
-            // Initialize scanner only once
+
             if (!qrScanner) {
                 qrScanner = new Html5Qrcode("qr-reader");
             }
 
-            // Start scanning directly with Html5Qrcode's built-in camera handling
             await qrScanner.start(
                 { facingMode: "environment" },
                 { fps: 10, qrbox: 250 },
@@ -73,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
     uploadBtn.addEventListener("click", function () {
         const fileInput = document.createElement("input");
         fileInput.type = "file";
-        fileInput.accept = "image/*";
+        fileInput.accept = "image/png, image/jpeg";
         fileInput.onchange = function (event) {
             const file = event.target.files[0];
             if (file) {
@@ -96,51 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     };
                 };
-                reader.readAsDataURL(file);
-            }
-        };
-        fileInput.click();
-    });
-
-    function handleScanSuccess(decodedText, scanner) {
-        alert("QR Code Scanned: " + decodedText);
-        if (scanner) scanner.stop();
-        document.getElementById("qr-reader").style.display = "none";
-        
-        // Store scanned extinguisher data
-        const mockData = {
-            id: decodedText,
-            type: "ABC",
-            location: "Reception",
-            weight: "6",
-            serviceDate: "2024-06-06",
-            expiryDate: "2027-06-05",
-            hptDate: "2027-06-05"
-        };
-
-        // Store in localStorage for access across views
-        localStorage.setItem("currentExtinguisher", JSON.stringify(mockData));
-        
-        // Show options instead of details directly
-        scanOptions.style.display = "block";
-    }
-
-    // Inspection Button Click
-    inspectionBtn.addEventListener("click", function() {
-        const extData = JSON.parse(localStorage.getItem("currentExtinguisher"));
-        scanOptions.style.display = "none";
-        
-        // Only managers can view and edit inspection sheet
-        if (userData.role === "manager") {
-            window.location.href = "inspection.html";
-        } else {
-            alert("Only managers can access inspection checksheets.");
-        }
-    });
-
-    // Report Button Click
-    reportBtn.addEventListener("click", function() {
-        scanOptions.style.display = "none";
-        window.location.href = "report.html";
-    });
-});
+                            reader.readAsDataURL(file);
+                        }
+                    };
+                });

@@ -50,7 +50,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 { facingMode: "environment" },
                 { fps: 10, qrbox: 250 },
                 (decodedText) => {
-                    handleScanSuccess(decodedText, qrScanner);
+                    handleScanSuccess(decodedText);
+                    qrScanner.stop()
                 },
                 (errorMessage) => {
                     console.log("Scanning error:", errorMessage);
@@ -98,10 +99,8 @@ document.addEventListener("DOMContentLoaded", function () {
         fileInput.click();
     });
 
-    function handleScanSuccess(decodedText, scanner) {
+    function handleScanSuccess(decodedText) {
         alert("QR Code Scanned: " + decodedText);
-        if (scanner) scanner.stop();
-        document.getElementById("qr-reader").style.display = "none";
 
         const mockData = {
             id: decodedText,

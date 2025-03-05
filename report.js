@@ -2,21 +2,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedReportId = localStorage.getItem("selectedReportId");
     const savedInspections = JSON.parse(localStorage.getItem("inspectionRecords")) || {};
     const reportTable = document.getElementById("report-table");
-    const checklistNames = [
-        "Located in Designated Place",
-        "Readily Visible not obstructed",
-        "Fire extinguisher is in good condition",
-        "Inspect tamper seal and safety pin",
-        "Check pressure gauge",
-        "Check fire extinguisher body for damage",
-        "Inspect hose and nozzle"
-    ];
 
-    // Save Report function
-    function downloadReportAsExcel(inspections) {
+    // Function to download report as CSV
+    function downloadReportAsCSV(inspections) {
         let csvContent = "data:text/csv;charset=utf-8,";
         csvContent += "S.No,Location,Type,Weight,Manufacturing Date,HPT Date,Inspected By,Inspection Date,Inspection Due Date\n";
-        
+
         inspections.slice(0, 3).forEach(inspection => {
             csvContent += `${inspection.id},${inspection.location},${inspection.type},${inspection.weight},${inspection.serviceDate},${inspection.hptDate},${inspection.inspectedBy},${inspection.inspectionDate},${inspection.inspectionDueDate}\n`;
         });
@@ -37,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     saveReportBtn.style.margin = "20px auto";
     saveReportBtn.addEventListener("click", () => {
         if (selectedReportId && savedInspections[selectedReportId]) {
-            downloadReportAsExcel(savedInspections[selectedReportId]);
+            downloadReportAsCSV(savedInspections[selectedReportId]);
         }
     });
     document.getElementById("report-container").appendChild(saveReportBtn);
@@ -80,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
             inspection.checklist.forEach((item, i) => {
                 reportTable.innerHTML += `
                     <tr>
-                        <td>${i+1}. ${checklistNames[i]}</td>
+                        <td>${i + 1}. ${checklistNames[i]}</td>
                         <td>${item.status}</td>
                         <td colspan="2">${item.remarks}</td>
                     </tr>
@@ -90,6 +81,4 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         reportTable.innerHTML = "<tr><td colspan='4'>No inspections found for this extinguisher.</td></tr>";
     }
-
-    // ... (rest of existing code)
 });

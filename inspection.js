@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const userData = JSON.parse(localStorage.getItem("loggedInUser "));
-    if (userData?.role !== "manager") {
+    if (!userData || userData.role !== "manager") {
         alert("Only managers can access this page");
         window.location.href = "dashboard.html";
         return;
@@ -61,71 +61,3 @@ document.addEventListener("DOMContentLoaded", () => {
             "Check fire extinguisher body for any corrosion/physical damage",
             "Inspect hose and nozzle for any defects"
         ];
-
-        checklistNames.forEach((name, index) => {
-            const status = document.querySelector(`input[name="check${index + 1}"]:checked`)?.value || "";
-            const remarks = document.getElementById(`remarks${index + 1}`).value;
-            csvContent += `${name},${status},${remarks}\n`;
-        });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `Inspection_${inspection.id}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    // Save handler
-    document.getElementById("save-inspection-btn").addEventListener("click", () => {
-        if (!validateForm()) return;
-        
-        const newInspection = {
-            id: extData.id,
-            location: extData.location,
-            type: extData.type,
-            weight: extData.weight,
-            serviceDate: extData.serviceDate,
-            hptDate: extData.hptDate,
-            inspectedBy: document.getElementById("inspected-by").value,
-            inspectionDate: document.getElementById("inspection-date").value,
-            inspectionDueDate: document.getElementById("inspection-due-date").value,
-            checklist: Array.from({ length: 7 }, (_, i) => ({
-                status: document.querySelector(`input[name="check${i + 1}"]:checked`)?.value || "",
-                remarks: document.getElementById(`remarks${i + 1}`).value
-            }))
-        };
-
-        if (!savedInspections[extData.id]) {
-            savedInspections[extData.id] = [];
-        }
-        if (savedInspections[extData.id].length >= 3) {
-            alert("You can only save up to 3 inspections for this extinguisher.");
-            return;
-        }
-        savedInspections[extData.id].push(newInspection);
-        localStorage.setItem("inspectionRecords", JSON.stringify(savedInspections));
-        localStorage.setItem("selectedReportId", extData.id); // Ensure the correct report ID is stored
-        alert("Inspection saved successfully!");
-
-        // Download the inspection as an Excel file
-        downloadInspectionAsExcel(newInspection);
-        
-        // Redirect back to dashboard where Inspection & Report buttons are available
-        window.location.href = "dashboard.html";
-    });
-
-    // Navigation buttons functionality
-    document.getElementById("home-btn").addEventListener("click", () => {
-        window.location.href = "dashboard.html";
-    });
-
-    document.getElementById("prev-btn").addEventListener("click", () => {
-        window.history.back();
-    });
-
-    document.getElementById("next-btn").addEventListener("click", () => {
-        window.location.href = "report.html";
-    });
-});

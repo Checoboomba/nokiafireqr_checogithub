@@ -142,24 +142,6 @@ input[type="radio"] {
     background-color: #218838;
 }
 
-/* Add to existing styles */
-#save-report-btn {
-    display: block;
-    width: 200px;
-    margin: 20px auto;
-    padding: 12px;
-    font-size: 16px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#save-report-btn:hover {
-    background-color: #218838;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     #inspection-container {

@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const extData = JSON.parse(localStorage.getItem("currentExtinguisher")) || {};
     let savedInspections = JSON.parse(localStorage.getItem("inspectionRecords")) || {};
-
+    
     // Auto-fill inspection data
     const elements = {
         "ext-id": extData.id,
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const inspectionDate = document.getElementById("inspection-date").value.trim();
         const inspectionDueDate = document.getElementById("inspection-due-date").value.trim();
         let isChecklistFilled = false;
-
+        
         Array.from({ length: 7 }, (_, i) => {
             if (document.querySelector(`input[name="check${i + 1}"]:checked`)) {
                 isChecklistFilled = true;
@@ -45,32 +45,22 @@ document.addEventListener("DOMContentLoaded", () => {
         return true;
     }
 
-    // Function to download inspection as CSV
-    function downloadInspectionAsCSV(inspection) {
-        const checklistNames = [
-            "Located in Designated Place",
-            "Readily Visible not obstructed",
-            "Fire extinguisher is in good condition",
-            "Inspect tamper seal and safety pin",
-            "Check pressure gauge",
-            "Check fire extinguisher body for damage",
-            "Inspect hose and nozzle"
-        ];
-
+    // Function to download inspection as Excel
+    function downloadInspectionAsExcel(inspection) {
         let csvContent = "data:text/csv;charset=utf-8,";
         csvContent += "S.No,Location,Type,Weight,Manufacturing Date,HPT Date,Inspected By,Inspection Date,Inspection Due Date\n";
         csvContent += `${inspection.id},${inspection.location},${inspection.type},${inspection.weight},${inspection.serviceDate},${inspection.hptDate},${inspection.inspectedBy},${inspection.inspectionDate},${inspection.inspectionDueDate}\n`;
-
+        
         csvContent += "\nChecklist:\n";
-        csvContent += "Checklist,Status,Remarks\n";
+        csvContent += "Check No,Status,Remarks\n";
         inspection.checklist.forEach((item, index) => {
-            csvContent += `"${checklistNames[index]}",${item.status},"${item.remarks}"\n`;
+            csvContent += `${index + 1},${item.status},${item.remarks}\n`;
         });
 
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `Inspection_${inspection.id}_${Date.now()}.csv`);
+        link.setAttribute("download", `Inspection_${inspection.id}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -79,15 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Save handler
     document.getElementById("save-inspection-btn").addEventListener("click", () => {
         if (!validateForm()) return;
-
-        const MAX_ATTEMPTS = 3;
-        const currentAttempts = (savedInspections[extData.id] || []).length;
-
-        if (currentAttempts >= MAX_ATTEMPTS) {
-            alert("Maximum of 3 inspections allowed per extinguisher!");
-            return;
-        }
-
+        
         const newInspection = {
             id: extData.id,
             location: extData.location,
@@ -109,12 +91,32 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         savedInspections[extData.id].push(newInspection);
         localStorage.setItem("inspectionRecords", JSON.stringify(savedInspections));
-        localStorage.setItem("selectedReportId", extData.id);
-
-        // Download the inspection as a CSV file
-        downloadInspectionAsCSV(newInspection);
-
+        localStorage.setItem("selectedReportId", extData.id); // Ensure the correct report ID is stored
         alert("Inspection saved successfully!");
+
+        // Download the inspection as an Excel file
+        downloadInspectionAsExcel(newInspection);
+        
+        // Redirect back to dashboard where Inspection & Report buttons are available
         window.location.href = "dashboard.html";
+    });
+
+    // Navigation buttons functionality
+    document.getElementById("home-btn").addEventListener("click", () => {
+        window.location.href = "dashboard.html";
+    });
+
+    document.getElementById("prev-btn").addEventListener("click", () => {
+        window.history.back();
+    });
+
+    document.getElementById("next-btn").addEventListener("click", () => {
+        window.history.forward();
+    });
+
+    // Report button functionality
+    document.getElementById("report-btn").addEventListener("click", () => {
+        localStorage.setItem("selectedReportId", extData.id);
+        window.location.href = "report.html";
     });
 });

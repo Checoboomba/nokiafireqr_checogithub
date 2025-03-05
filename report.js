@@ -31,12 +31,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     <th colspan="6">Checklist</th>
                 </tr>
             `;
-            inspection.checklist.forEach((item, i) => {
+            reportTable.innerHTML += `
+                <tr>
+                    <th>Checklist</th>
+                    <th>Yes/No</th>
+                    <th>Remarks</th>
+                </tr>
+            `;
+            const checklistNames = [
+                "Located in Designated Place",
+                "Readily Visible not obstructed",
+                "Fire extinguisher is in good condition.",
+                "Inspect tamper seal and safety pin ( which holds safety pin inplace )",
+                "Check pressure gauge ( if green its good for use , red- overcharged, and yellow – low charged)",
+                "Check fire extinguisher body for any corrosion/physical damage",
+                "Inspect hose and nozzle for any defects"
+            ];
+
+            checklistNames.forEach((name, i) => {
+                const item = inspection.checklist[i];
                 reportTable.innerHTML += `
                     <tr>
-                        <td>Check ${i + 1}</td>
+                        <td>${name}</td>
                         <td>${item.status}</td>
-                        <td colspan="4">${item.remarks}</td>
+                        <td>${item.remarks}</td>
                     </tr>
                 `;
             });
@@ -45,11 +63,40 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         reportTable.innerHTML = "<tr><td colspan='6'>No inspections found for this extinguisher.</td></tr>";
     }
+
+    // Save Report functionality
+    document.getElementById("save-report-btn").addEventListener("click", () => {
+        const reportData = inspections.map(inspection => ({
+            id: inspection.id,
+            location: inspection.location,
+            type: inspection.type,
+            weight: inspection.weight,
+            serviceDate: inspection.serviceDate,
+            hptDate: inspection.hptDate,
+            inspectionDate: inspection.inspectionDate,
+            inspectionDueDate: inspection.inspectionDueDate,
+            inspectedBy: inspection.inspectedBy
+        }));
+
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "S.No,Location,Type,Weight,Manufacturing Date,HPT Date,Inspected By,Inspection Date,Inspection Due Date\n";
+        reportData.forEach(data => {
+            csvContent += `${data.id},${data.location},${data.type},${data.weight},${data.serviceDate},${data.hptDate},${data.inspectedBy},${data.inspectionDate},${data.inspectionDueDate}\n`;
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `Report_${selectedReportId}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+
     document.getElementById("prev-btn").addEventListener("click", () => {
         window.location.href = "dashboard.html";
     });
     document.getElementById("home-btn").addEventListener("click", () => {
         window.location.href = "dashboard.html";
     });
-
 });

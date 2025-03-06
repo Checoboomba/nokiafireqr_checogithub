@@ -1,23 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Retrieve QR Code Data from Local Storage
     let qrData = localStorage.getItem("qr_scan_data");
-    
+
     if (qrData) {
         let parsedData = JSON.parse(qrData);
-        console.log("QR Data Loaded:", parsedData); // Debugging Log
+        console.log("QR Data Loaded:", parsedData);
 
-        // Auto-Fill the Form Fields
+        // Auto-Fill Inspection Table
         document.getElementById("ext-id").textContent = parsedData.extinguisher_id || "N/A";
         document.getElementById("ext-location").textContent = parsedData.location || "N/A";
         document.getElementById("ext-type").textContent = parsedData.extinguisher_type || "N/A";
         document.getElementById("ext-weight").textContent = parsedData.weight || "N/A";
         document.getElementById("ext-serviceDate").textContent = parsedData.service_date || "N/A";
         document.getElementById("ext-hptDate").textContent = parsedData.hpt_date || "N/A";
-
-        // Set Current Date & Time for Inspection
-        let currentDate = new Date().toISOString().split("T")[0];
-        document.getElementById("inspection-date").value = currentDate;
-        document.getElementById("inspection-time").textContent = new Date().toLocaleTimeString();
 
         // Clear Local Storage After Auto-Filling
         localStorage.removeItem("qr_scan_data");
@@ -26,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// Save Inspection Button Click Event
+// Save Inspection and Download CSV
 document.getElementById("save-inspection-btn").addEventListener("click", function () {
     let checklistValues = [];
     let allChecked = true;
@@ -56,7 +51,7 @@ document.getElementById("save-inspection-btn").addEventListener("click", functio
     // Format Data for CSV Download
     let csvContent = "Checklist,Yes/No,Remarks\n";
     checklistValues.forEach(row => {
-        csvContent += `${row.checklist},${row.response},${row.remarks}\n`;
+        csvContent += `"${row.checklist}","${row.response}","${row.remarks}"\n`;
     });
 
     let blob = new Blob([csvContent], { type: "text/csv" });

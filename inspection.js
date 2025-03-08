@@ -79,9 +79,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 allChecked = false;
                 missedFields.push(`Checklist item #${i}`);
             } else {
+                // Get the full text from the checklist table row
                 let checklistText = document.querySelector(`#checklist-table tr:nth-child(${i}) td:first-child`).textContent;
+                
+                // Remove the serial number (1-7) from the beginning of the text
+                // This regex removes numeric prefixes like "1.", "2)", "3. ", etc.
+                let cleanedText = checklistText.replace(/^\s*\d+[\s\.\)-]*\s*/, '').trim();
+                
                 checklistValues.push({
-                    checklist: checklistText,
+                    checklist: cleanedText,
                     response: yes ? "Yes" : "No",
                     remarks: remarks
                 });
@@ -125,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
         csvContent += "Fire Extinguisher S.No,Location,Type of Fire Extinguisher,Weight in Kg,Manufacturing / Refilling Date,HPT Date,Inspected By,Inspection Done on,Time\n";
         csvContent += `${newInspection.id},${newInspection.location},${newInspection.type},${newInspection.weight},${newInspection.serviceDate},${newInspection.hptDate},${newInspection.inspectedBy},${newInspection.inspectionDate},${newInspection.inspectionTime}\n\n`;
         
-        // Add checklist section
+        // Add checklist section (with cleaned text without serial numbers)
         csvContent += "Checklist,Yes/No,Remarks\n";
         newInspection.checklist.forEach(row => {
             csvContent += `"${row.checklist}","${row.response}","${row.remarks}"\n`;

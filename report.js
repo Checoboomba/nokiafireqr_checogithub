@@ -3,41 +3,43 @@ document.addEventListener("DOMContentLoaded", () => {
     const savedInspections = JSON.parse(localStorage.getItem("inspectionRecords")) || {};
     const reportTable = document.getElementById("report-table");
 
-    if (selectedReportId && savedInspections[selectedReportId]) {
+    if (selectedReportId && savedInspections[selectedReportId] && savedInspections[selectedReportId].length > 0) {
         const inspections = savedInspections[selectedReportId];
         reportTable.innerHTML = "";
 
         inspections.forEach((inspection, index) => {
+            // Basic extinguisher information
             reportTable.innerHTML += `
                 <tr>
-                    <th>Inspection ${index + 1}</th>
+                    <th colspan="6" class="section-header">Inspection ${index + 1}</th>
                 </tr>
                 <tr>
-                    <th>S.No</th><td>${inspection.id}</td>
-                    <th>Location</th><td>${inspection.location}</td>
-                    <th>Type</th><td>${inspection.type}</td>
+                    <th>S.No</th><td>${inspection.id || 'N/A'}</td>
+                    <th>Location</th><td>${inspection.location || 'N/A'}</td>
+                    <th>Type</th><td>${inspection.type || 'N/A'}</td>
                 </tr>
                 <tr>
-                    <th>Weight</th><td>${inspection.weight} kg</td>
-                    <th>Manufacturing Date</th><td>${inspection.serviceDate}</td>
-                    <th>HPT Date</th><td>${inspection.hptDate}</td>
+                    <th>Weight</th><td>${inspection.weight || 'N/A'} kg</td>
+                    <th>Manufacturing Date</th><td>${inspection.serviceDate || 'N/A'}</td>
+                    <th>HPT Date</th><td>${inspection.hptDate || 'N/A'}</td>
                 </tr>
                 <tr>
-                    <th>Last Inspection</th><td>${inspection.inspectionDate}</td>
-                    <th>Next Due</th><td>${inspection.inspectionDueDate}</td>
-                    <th>Inspected By</th><td>${inspection.inspectedBy}</td>
-                </tr>
-                <tr>
-                    <th colspan="6">Checklist</th>
+                    <th>Last Inspection</th><td>${inspection.inspectionDate || 'N/A'}</td>
+                    <th>Next Due</th><td>${inspection.inspectionDueDate || 'N/A'}</td>
+                    <th>Inspected By</th><td>${inspection.inspectedBy || 'N/A'}</td>
                 </tr>
             `;
+            
+            // Checklist headers (removed the extra "Checklist" row)
             reportTable.innerHTML += `
                 <tr>
-                    <th>Checklist</th>
+                    <th colspan="2">Checklist</th>
                     <th>Yes/No</th>
-                    <th>Remarks</th>
+                    <th colspan="3">Remarks</th>
                 </tr>
             `;
+            
+            // Define the checklist names in case they're not properly stored in the inspection data
             const checklistNames = [
                 "Located in Designated Place",
                 "Readily Visible not obstructed",
@@ -48,16 +50,39 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Inspect hose and nozzle for any defects"
             ];
 
-            checklistNames.forEach((name, i) => {
-                const item = inspection.checklist[i];
+            // Ensure the checklist array exists in the inspection data
+            if (inspection.checklist && Array.isArray(inspection.checklist)) {
+                // Display checklist items from inspection data
+                inspection.checklist.forEach((item, i) => {
+                    // Use the item's checklist text if available, otherwise fall back to predefined names
+                    const checklistText = item.checklist || checklistNames[i] || `Checklist Item ${i+1}`;
+                    const response = item.response || 'N/A';
+                    const remarks = item.remarks || 'N/A';
+                    
+                    reportTable.innerHTML += `
+                        <tr>
+                            <td colspan="2">${checklistText}</td>
+                            <td>${response}</td>
+                            <td colspan="3">${remarks}</td>
+                        </tr>
+                    `;
+                });
+            } else {
                 reportTable.innerHTML += `
                     <tr>
-                        <td>${name}</td>
-                        <td>${item.status}</td>
-                        <td>${item.remarks}</td>
+                        <td colspan="6">No checklist data available for this inspection.</td>
                     </tr>
                 `;
-            });
+            }
+            
+            // Add a spacer row between inspections
+            if (index < inspections.length - 1) {
+                reportTable.innerHTML += `
+                    <tr>
+                        <td colspan="6" style="height: 30px;"></td>
+                    </tr>
+                `;
+            }
         });
         
     } else {
@@ -66,36 +91,70 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Save Report functionality
     document.getElementById("save-report-btn").addEventListener("click", () => {
-        const reportData = inspections.map(inspection => ({
-            id: inspection.id,
-            location: inspection.location,
-            type: inspection.type,
-            weight: inspection.weight,
-            serviceDate: inspection.serviceDate,
-            hptDate: inspection.hptDate,
-            inspectionDate: inspection.inspectionDate,
-            inspectionDueDate: inspection.inspectionDueDate,
-            inspectedBy: inspection.inspectedBy
-        }));
-
+        if (!selectedReportId || !savedInspections[selectedReportId] || savedInspections[selectedReportId].length === 0) {
+            alert("No inspection data available to save.");
+            return;
+        }
+        
+        const inspections = savedInspections[selectedReportId];
+        
+        // Format Data for CSV Download with proper formatting
         let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "Fire Extinguisher Report\n\n";
         csvContent += "S.No,Location,Type,Weight,Manufacturing Date,HPT Date,Inspected By,Inspection Date,Inspection Due Date\n";
-        reportData.forEach(data => {
-            csvContent += `${data.id},${data.location},${data.type},${data.weight},${data.serviceDate},${data.hptDate},${data.inspectedBy},${data.inspectionDate},${data.inspectionDueDate}\n`;
+        
+        inspections.forEach((inspection, index) => {
+            csvContent += `${inspection.id || 'N/A'},${inspection.location || 'N/A'},${inspection.type || 'N/A'},${inspection.weight || 'N/A'},${inspection.serviceDate || 'N/A'},${inspection.hptDate || 'N/A'},${inspection.inspectedBy || 'N/A'},${inspection.inspectionDate || 'N/A'},${inspection.inspectionDueDate || 'N/A'}\n`;
+            
+            // Add checklist for each inspection
+            if (index === 0) {
+                csvContent += "\nChecklist Details:\n";
+                csvContent += "Inspection,Checklist Item,Status,Remarks\n";
+            }
+            
+            if (inspection.checklist && Array.isArray(inspection.checklist)) {
+                inspection.checklist.forEach(item => {
+                    // Clean the data to avoid CSV formatting issues
+                    const cleanText = item.checklist ? item.checklist.replace(/"/g, '""') : 'N/A';
+                    const cleanResponse = item.response ? item.response.replace(/"/g, '""') : 'N/A';
+                    const cleanRemarks = item.remarks ? item.remarks.replace(/"/g, '""') : 'N/A';
+                    
+                    csvContent += `"Inspection ${index + 1}","${cleanText}","${cleanResponse}","${cleanRemarks}"\n`;
+                });
+            }
+            
+            // Add a blank line between inspections
+            csvContent += "\n";
         });
 
+        // Add summary information
+        csvContent += "\nSummary:\n";
+        csvContent += `Total Inspections,${inspections.length}\n`;
+        csvContent += `Last Inspection Date,${inspections[inspections.length - 1].inspectionDate || 'N/A'}\n`;
+        csvContent += `Next Due Date,${inspections[inspections.length - 1].inspectionDueDate || 'N/A'}\n`;
+        csvContent += `Report Generated On,${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}\n`;
+
+        // Download CSV file
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `Report_${selectedReportId}.csv`);
+        link.setAttribute("download", `Fire_Extinguisher_Report_${selectedReportId}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        
+        alert("Report saved successfully!");
     });
 
+    // Navigation functionality
     document.getElementById("prev-btn").addEventListener("click", () => {
-        window.location.href = "dashboard.html";
+        window.history.back();
     });
+    
+    document.getElementById("next-btn").addEventListener("click", () => {
+        window.history.forward();
+    });
+    
     document.getElementById("home-btn").addEventListener("click", () => {
         window.location.href = "dashboard.html";
     });

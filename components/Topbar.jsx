@@ -1,7 +1,7 @@
 import { AppBar, Toolbar, Typography } from "@mui/material";
+import AvatarComponent from "./Avatar";
 import colorConfigs from "../configs/colorConfigs";
 import sizeConfigs from "../configs/sizeConfigs";
-import Avatar from "./Avatar";
 
 const Topbar = () => {
   return (
@@ -10,9 +10,9 @@ const Topbar = () => {
       sx={{
         width: `calc(100% - ${sizeConfigs.sidebar.width})`,
         ml: sizeConfigs.sidebar.width,
-        boxShadow: "unset",
         backgroundColor: colorConfigs.topbar.bg,
         color: colorConfigs.topbar.color,
+        boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
       }}
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>
@@ -20,13 +20,13 @@ const Topbar = () => {
           variant="h5"
           sx={{
             fontWeight: "bold",
-            color: "#fff",
             fontFamily: "Arial",
+            color: "#fff",
           }}
         >
           E-Safety Work Permit
         </Typography>
-        <Avatar />
+        <AvatarComponent />
       </Toolbar>
     </AppBar>
   );

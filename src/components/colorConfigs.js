@@ -14,4 +14,5 @@ const colorConfigs = {
   mainBg: colors.grey["100"],
 };
 
+
 export default colorConfigs;

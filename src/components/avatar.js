@@ -8,6 +8,8 @@ import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { deepPurple } from "@mui/material/colors";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -44,18 +46,23 @@ export default function AvatarComponent() {
   const [userDetails, setUserDetails] = useState({});
   const userId = sessionStorage.getItem("UserId");
 
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
   useEffect(() => {
     axios
       .post("API_URL/fetchUserDetails", { userId })
       .then((response) => setUserDetails(response.data))
       .catch((error) => console.error("Error fetching user data", error));
-  }, []);
+  }, [userId]);
 
   const handleLogout = () => {
     sessionStorage.clear();
     navigate("/");
     window.location.reload();
   };
+
+  const avatarSize = isSmallScreen ? 40 : 56;
 
   return (
     <Stack direction="row" spacing={2}>
@@ -65,11 +72,17 @@ export default function AvatarComponent() {
         variant="dot"
         onClick={(e) => setAnchorEl(e.currentTarget)}
       >
-        <Avatar sx={{ bgcolor: deepPurple[500] }}>
+        <Avatar
+          sx={{
+            bgcolor: deepPurple[500],
+            width: avatarSize,
+            height: avatarSize,
+            fontSize: isSmallScreen ? 20 : 24,
+          }}
+        >
           {userDetails.PersonName?.charAt(0)}
         </Avatar>
       </StyledBadge>
-
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -80,3 +93,4 @@ export default function AvatarComponent() {
     </Stack>
   );
 }
+

@@ -56,30 +56,48 @@ const Inspection = () => {
     setChecklist(updated);
   };
 
-  // Function to generate and download CSV
-  const downloadCSV = (inspectionData) => {
-    // Format Data for CSV Download according to the required format from improved-inspection-js.js
-    let csvContent = "data:text/csv;charset=utf-8,";
-    
-    // Header row for extinguisher details
-    csvContent += "Fire Extinguisher S.No,Location,Type of Fire Extinguisher,Weight in Kg,Manufacturing / Refilling Date,HPT Date,Inspected By,Inspection Done on,Time\n";
-    
-    // Extinguisher details row
-    csvContent += `${inspectionData.id || "N/A"},${inspectionData.location || "N/A"},${inspectionData.type || "N/A"},${inspectionData.weight || "N/A"},${inspectionData.serviceDate || "N/A"},${inspectionData.hptDate || "N/A"},${inspectionData.inspectedBy},${inspectionData.inspectionDate},${inspectionData.inspectionTime}\n\n`;
-    
-    // Add checklist section header
-    csvContent += "Checklist,Yes/No,Remarks\n";
-    
-    // Add each checklist item
-    inspectionData.checklist.forEach(row => {
-      csvContent += `"${row.checklist}","${row.response}","${row.remarks || "N/A"}"\n`;
+  const downloadCSV = (newInspection) => {
+    // Convert inspection data to CSV
+    const csvRows = [];
+
+    // Add headers
+    const headers = [
+      'Extinguisher ID', 'Location', 'Type', 'Weight', 'Service Date', 'HPT Date',
+      'Inspected By', 'Inspection Date', 'Inspection Due Date', 'Inspection Time'
+    ];
+    csvRows.push(headers.join(','));
+
+    // Add extinguisher details
+    const extinguisherDetails = [
+      newInspection.id, 
+      newInspection.location, 
+      newInspection.type, 
+      newInspection.weight, 
+      newInspection.serviceDate, 
+      newInspection.hptDate,
+      newInspection.inspectedBy, 
+      newInspection.inspectionDate, 
+      newInspection.inspectionDueDate, 
+      newInspection.inspectionTime
+    ];
+    csvRows.push(extinguisherDetails.map(val => `"${val}"`).join(','));
+
+    // Add checklist headers
+    csvRows.push('\nChecklist,Status,Remarks');
+
+    // Add checklist items
+    newInspection.checklist.forEach(item => {
+      csvRows.push(`"${item.checklist}","${item.response}","${item.remarks}"`);
     });
 
-    // Create and trigger download
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Fire_Extinguisher_Inspection_${inspectionData.id}.csv`);
+    // Create CSV file
+    const csvContent = csvRows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `Inspection_${newInspection.id}_${newInspection.inspectionDate}.csv`);
+    link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -100,7 +118,7 @@ const Inspection = () => {
     const updatedChecklist = checklist.map((item, index) => ({
       checklist: CHECKLIST_ITEMS[index],
       response: item.status,
-      remarks: item.remarks || "N/A"
+      remarks: item.remarks
     }));
   
     const newInspection = {
@@ -118,10 +136,10 @@ const Inspection = () => {
     savedInspections[extData.id].push(newInspection);
     localStorage.setItem("inspectionRecords", JSON.stringify(savedInspections));
     localStorage.setItem("selectedReportId", extData.id);
-    
-    // Download CSV file
-    downloadCSV(newInspection);
   
+    // Download CSV
+    downloadCSV(newInspection);
+
     alert("Inspection saved!");
     navigate("/dashboard");
   };
@@ -169,7 +187,7 @@ const Inspection = () => {
                 <td>{item}</td>
                 <td><input type="radio" name={`check${index + 1}`} value="Yes" onChange={() => handleChecklistChange(index, "status", "Yes")} /></td>
                 <td><input type="radio" name={`check${index + 1}`} value="No" onChange={() => handleChecklistChange(index, "status", "No")} /></td>
-                <td><input type="text" value={checklist[index].remarks || ""} onChange={(e) => handleChecklistChange(index, "remarks", e.target.value)} /></td>
+                <td><input type="text" value={checklist[index].remarks} onChange={(e) => handleChecklistChange(index, "remarks", e.target.value)} /></td>
               </tr>
             ))}
           </tbody>
@@ -182,3 +200,4 @@ const Inspection = () => {
 };
 
 export default Inspection;
+  

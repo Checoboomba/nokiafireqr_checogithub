@@ -42,7 +42,8 @@ const Topbar = () => {
 
   // Function to handle logo click
   const handleLogoClick = () => {
-    navigate("/dashboard"); // Adjust route path if needed
+    navigate("/dashboard"); // navigate to dashboard
+    
   };
 
   return (

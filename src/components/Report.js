@@ -122,7 +122,7 @@ const Report = () => {
                   {inspection.checklist && inspection.checklist.map((item, i) => (
                     <tr key={`item-${index}-${i}`}>
                       <td colSpan="2">{item.checklist || `Checklist Item ${i + 1}`}</td>
-                      <td>{item.status || 'N/A'}</td>
+                      <td>{item.response || 'N/A'}</td>
                       <td colSpan="3">{item.remarks || 'N/A'}</td>
                     </tr>
                   ))}

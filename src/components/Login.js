@@ -39,7 +39,7 @@ const Login = () => {
           type="email"
           id="login-email"
           required
-          placeholder="example@nokia.com"
+          
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
